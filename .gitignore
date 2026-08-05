@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Data files (large raw files — store via Git LFS or external link)
+data/*.csv
+data/*.pkl
+data/*.parquet
+data/*.feather
+data/*.h5
+data/*.hdf5
+!data/README.md
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs & output
+*.log
+outputs/
+*.out
+
+# Model weights
+*.pt
+*.pth
+*.ckpt
+models/
+
+# Secrets
+.env
+secrets.json
