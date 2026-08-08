@@ -23,7 +23,7 @@
   - [Preprocessing & Preparation](#preprocessing--preparation)
   - [Handling Missing Values & Outliers](#handling-missing-values--outliers)
   - [Feature Selection, Scaling & Encoding](#feature-selection-scaling--encoding)
-  - [K-Means Execution & Optimal $K$ Selection](#k-means-execution--optimal-k-selection)
+  - [K-Means Execution & Optimal K Selection](#k-means-execution--optimal-k-selection)
   - [Dimensionality Reduction & Visualization (PCA)](#dimensionality-reduction--visualization-pca)
 - [6. Price Modeling & Regression Analysis](#6-price-modeling--regression-analysis)
   - [Subset Selection & Financial Cleaning](#subset-selection--financial-cleaning)
@@ -90,7 +90,7 @@ The dataset consists of **1,000,000+ real estate listings** across Iran, capture
 - **Transformed Fields:** `transformable_credit`, `transformable_rent`, `transformed_credit`, `transformed_rent`, `rent_credit_transform`.
 
 #### 5. Property Specifications
-- **Dimensions:** `building_size` (built area in $m^2$), `land_size` (land plot area in $m^2$).
+- **Dimensions:** `building_size` (built area in m²), `land_size` (land plot area in m²).
 - **Deed Specifications:** `deed_type` (e.g., single-owner deed, six-barnd), `has_business_deed` (commercial deed flag).
 - **Building Structure:** `floor` (unit floor number), `rooms_count` (bedroom count), `total_floors_count` (total building stories), `unit_per_floor` (units per floor).
 - **Age & Renovation:** `construction_year` (solar Hijri year of build), `is_rebuilt` (renovation flag).
@@ -175,11 +175,11 @@ Duplicate detection was restricted to the high-quality subset. Across **981,675 
 
 ### Preprocessing & Preparation
 
-Clustering was targeted at discovering latent property categories within the Tehran real estate market using mathematical distance metrics ($K$-Means).
+Clustering was targeted at discovering latent property categories within the Tehran real estate market using mathematical distance metrics (K-Means).
 
 #### Missing Value Strategy:
 - **High-Missingness Columns (>70%):** Columns like `rent_to_single`, `transformed_rent`, `transformed_credit`, `transformable_rent`, `transformable_credit`, `rent_credit_transform`, `has_sauna`, `has_pool`, `has_jacuzzi` were dropped or converted to binary indicator flags.
-- **Land Size (`land_size`):** Inspected in conjunction with `building_size`. Retained primarily for house/villa property categories. Evaluated 27,462 records where $building\_size > land\_size$, resolving data entry swaps. Dropped 12 corrupt rows where both land and building dimensions were zero.
+- **Land Size (`land_size`):** Inspected in conjunction with `building_size`. Retained primarily for house/villa property categories. Evaluated 27,462 records where `building_size > land_size`, resolving data entry swaps. Dropped 12 corrupt rows where both land and building dimensions were zero.
 - **Construction Year (`construction_year`):** Missing values imputed using the 25th percentile ($Q_1$) to conservatively reflect older existing building stock.
 - **Building Size (`building_size`):** Imputed via hierarchical group-medians conditioned on `rooms_count` and `cat3_slug`.
 
@@ -189,7 +189,7 @@ Extremely large placeholder values were removed prior to model training:
 - `price_value = 999,999,999,999,999`
 - `building_size = 10,000,000`
 
-To preserve valid luxury properties while removing entries corrupting $K$-Means centroid calculations, logarithmic transformation ($\log(1+x)$) was applied prior to computing Interquartile Range (IQR) fences:
+To preserve valid luxury properties while removing entries corrupting K-Means centroid calculations, logarithmic transformation ($\log(1+x)$) was applied prior to computing Interquartile Range (IQR) fences:
 $$\text{IQR} = Q_3 - Q_1$$
 $$\text{Upper Fence} = Q_3 + 1.5 \times \text{IQR}$$
 $$\text{Lower Fence} = Q_1 - 1.5 \times \text{IQR}$$
@@ -201,11 +201,11 @@ IQR bounds were calculated independently within each property type group (`cat3_
 - **Final Feature Vector (11 Features):** Physical dimensions (`building_size`, `land_size`, `rooms_count`, `construction_year`), Core amenities (`has_elevator`, `has_parking`, `has_warehouse`), Financial attributes (`price_value`, `rent_value`, `credit_value`), Location (`location_latitude`).
 - **Standardization:** All continuous numerical features were scaled using `StandardScaler`:
   $$z = \frac{x - \mu}{\sigma}$$
-  Boolean amenities retained $0/1$ representation.
+  Boolean amenities retained 0/1 representation.
 
-### K-Means Execution & Optimal $K$ Selection
+### K-Means Execution & Optimal K Selection
 
-The $K$-Means algorithm was evaluated across $K \in [2, 10]$ using the Elbow Method (Within-Cluster Sum of Squares / Inertia) and Cross-Tabulation matrices.
+The K-Means algorithm was evaluated across $K \in [2, 10]$ using the Elbow Method (Within-Cluster Sum of Squares / Inertia) and Cross-Tabulation matrices.
 
 ```
 Inertia / WCSS Curve (Elbow Analysis)
@@ -221,26 +221,26 @@ Inertia / WCSS Curve (Elbow Analysis)
 ```
 
 #### Cluster Resolution Analysis:
-- **$K=5$ vs $K=6$:** $K=5$ merged rental villas and rental apartments into a single ambiguous cluster. $K=6$ cleanly separated them.
-- **$K=7$ vs $K=8$:** $K=8$ isolated commercial real estate and high-value luxury sales from standard residential listings.
+- **K=5 vs K=6:** K=5 merged rental villas and rental apartments into a single ambiguous cluster. K=6 cleanly separated them.
+- **K=7 vs K=8:** K=8 isolated commercial real estate and high-value luxury sales from standard residential listings.
 
-#### Final Cluster Profiles ($K=8$):
+#### Final Cluster Profiles (K=8):
 
 | Cluster ID | Dominant Market Profile | Key Attributes |
 |---|---|---|
-| **Cluster 0** | Mid-Range Residential Sales | Medium size ($80-120 m^2$), standard urban price points |
-| **Cluster 1** | Standard Residential Rentals | High `rent_value`, moderate deposit, $2$ rooms |
-| **Cluster 2** | Small / Economy Residential Units | Compact size ($<60 m^2$), lower price per unit |
+| **Cluster 0** | Mid-Range Residential Sales | Medium size (80–120 m²), standard urban price points |
+| **Cluster 1** | Standard Residential Rentals | High `rent_value`, moderate deposit, 2 rooms |
+| **Cluster 2** | Small / Economy Residential Units | Compact size (<60 m²), lower price per unit |
 | **Cluster 3** | Commercial Properties & Shops | Commercial deed, high location accessibility |
 | **Cluster 4** | Large Rental Villas | High `land_size`, private amenities, outer suburbs |
 | **Cluster 5** | High-Deposit Rental Apartments | High `credit_value` (mortgage model), low monthly rent |
-| **Cluster 6** | Luxury High-Value Sales | Large `building_size` ($>250 m^2$), top tier `price_value` |
+| **Cluster 6** | Luxury High-Value Sales | Large `building_size` (>250 m²), top tier `price_value` |
 | **Cluster 7** | Small Commercial / Office Rentals | Small office spaces, mixed commercial use |
 
 ### Dimensionality Reduction & Visualization (PCA)
 
 #### Direct 2D Projection vs. Multi-Stage 8D PCA:
-- **Direct 11D $\rightarrow$ 2D PCA:** Retained only **42.73%** of total variance. Visual scatter plots exhibited overlapping clusters, misrepresenting cluster separation quality.
+- **Direct 11D → 2D PCA:** Retained only **42.73%** of total variance. Visual scatter plots exhibited overlapping clusters, misrepresenting cluster separation quality.
 - **PCA to 8 Components:** Retained **90.22%** of cumulative variance.
 
 Re-clustering in the 8-component PCA space confirmed high cluster stability:
@@ -256,10 +256,10 @@ Re-clustering in the 8-component PCA space confirmed high cluster stability:
 To model sale prices accurately, the dataset was filtered to **Tehran Residential Sales** (`cat2_slug == 'residential-sell'`), leaving **94,541 candidate listings**.
 
 #### Outlier Truncation & Financial Fences:
-- `rent_value`: Excluded $< 500,000$ and $> 200,000,000$ Tomans.
-- `credit_value`: Excluded $< 50,000,000$ and $> 50,000,000,000$ Tomans.
-- `price_value`: Truncated absolute extreme tail ($> 100,000,000,000$ IRR/Tomans) and applied log-space $1.5 \times \text{IQR}$ fences grouped by `cat3_slug`.
-- Truncated top $1\%$ and bottom $1\%$ tails of target price distribution.
+- `rent_value`: Excluded < 500,000 and > 200,000,000 Tomans.
+- `credit_value`: Excluded < 50,000,000 and > 50,000,000,000 Tomans.
+- `price_value`: Truncated absolute extreme tail (> 100,000,000,000 IRR/Tomans) and applied log-space $1.5 \times \text{IQR}$ fences grouped by `cat3_slug`.
+- Truncated top 1% and bottom 1% tails of target price distribution.
 - **Final Cleaned Subset:** **84,586 records**.
 
 ### Feature Engineering
@@ -283,7 +283,7 @@ Three domain-specific engineered features were introduced:
 
 ### Data Splitting & ColumnTransformer Pipeline
 
-- **Data Split:** $80\%$ Training / $20\%$ Testing. The Training set was further split $80/20$ into Train ($64\%$) and Validation ($16\%$).
+- **Data Split:** 80% Training / 20% Testing. The Training set was further split 80/20 into Train (64%) and Validation (16%).
 - **Preprocessing Pipeline (`ColumnTransformer`):**
   - Continuous Numeric: `StandardScaler`.
   - Categorical Features: `OneHotEncoder(handle_unknown='ignore')`.
@@ -294,16 +294,16 @@ Four regression architectures were evaluated on the validation dataset:
 
 | Model Architecture | Base $R^2$ (Val) | Tuned $R^2$ (Val) | Best Hyperparameters / Notes |
 |---|---|---|---|
-| **Linear Regression** | $0.770$ | $0.770$ | Standard OLS baseline; fast, linear coefficients |
-| **KNN Regressor** ($k=5$) | **$0.830$** | **$0.835$** | Weighted by distance (`weights='distance'`), $k=7$ |
-| **Decision Tree Regressor** | $0.760$ | $0.770$ | Tuned via `RandomizedSearchCV`: `max_depth=10`, `min_samples_split=20` |
-| **MLP Regressor** (Neural Net) | $< 0.000$ (Negative) | $< 0.000$ (Negative) | Architectures: $(64,)$, $(64, 32)$, $\text{max\_iter}=200$, $\text{ReLU}$ |
+| **Linear Regression** | 0.770 | 0.770 | Standard OLS baseline; fast, linear coefficients |
+| **KNN Regressor** ($k=5$) | **0.830** | **0.835** | Weighted by distance (`weights='distance'`), $k=7$ |
+| **Decision Tree Regressor** | 0.760 | 0.770 | Tuned via `RandomizedSearchCV`: `max_depth=10`, `min_samples_split=20` |
+| **MLP Regressor** (Neural Net) | < 0.000 (Negative) | < 0.000 (Negative) | Architectures: `(64,)`, `(64, 32)`, `max_iter=200`, ReLU |
 
 `RandomizedSearchCV` was executed over a statistically representative 2,000-sample fold to optimize tree depth and neural network hyperparameters under memory constraints.
 
 ### Neural Network (MLP) Performance Analysis
 
-The Multi-Layer Perceptron (`MLPRegressor`) persistently failed to achieve positive $R^2$ scores across various hidden layer configurations, activation functions ($\text{ReLU}, \text{tanh}$), and regularization terms ($\alpha$).
+The Multi-Layer Perceptron (`MLPRegressor`) persistently failed to achieve positive $R^2$ scores across various hidden layer configurations, activation functions (ReLU, tanh), and regularization terms ($\alpha$).
 
 #### Diagnostic Causes:
 1. **High-Dimensional Feature Sparsity:** One-Hot Encoding generated sparse categorical matrices, causing backpropagation gradient dissipation across unpopulated input dimensions.
@@ -316,9 +316,9 @@ Using the top-performing regression model ($K$-NN / Tuned Decision Tree), the ra
 $$\text{Price Ratio} = \frac{\text{Actual Listed Price}}{\text{Model Predicted Price}}$$
 
 Listings were categorized into three operational valuation bands:
-- **Under-Valued (Bargain Files):** $\text{Price Ratio} < 0.8$ (Listed $>20\%$ below model estimate).
-- **Fairly Valued (Normal Market):** $0.8 \le \text{Price Ratio} \le 1.2$.
-- **Over-Valued (Inflated Listings):** $\text{Price Ratio} > 1.2$ (Listed $>20\%$ above model estimate).
+- **Under-Valued (Bargain Files):** Price Ratio < 0.8 (Listed >20% below model estimate).
+- **Fairly Valued (Normal Market):** 0.8 ≤ Price Ratio ≤ 1.2.
+- **Over-Valued (Inflated Listings):** Price Ratio > 1.2 (Listed >20% above model estimate).
 
 ```
 Price Valuation Distribution (Test Set)
@@ -335,14 +335,14 @@ Price Valuation Distribution (Test Set)
 
 #### Test Set Valuation Breakdown:
 
-| Valuation Category | Listing Count | Avg. Built Size ($m^2$) | Avg. Actual Price (Billion IRR/Tomans) | Top Represented Neighborhoods |
+| Valuation Category | Listing Count | Avg. Built Size (m²) | Avg. Actual Price (Billion IRR/Tomans) | Top Represented Neighborhoods |
 |---|---|---|---|---|
-| **Under-Valued** | ~2,000 | $94 m^2$ | $4.25$ | Suburbs, Southern districts, Motivated sellers |
-| **Fairly Valued** | ~9,000 | $93 m^2$ | $8.99$ | Poonak, Jeyhoun, Sazman-e-Barnameh |
-| **Over-Valued** | ~1,800 | $98 m^2$ | $10.00$ | Poonak, Chitgar Lake, Salsabil |
+| **Under-Valued** | ~2,000 | 94 m² | 4.25 | Suburbs, Southern districts, Motivated sellers |
+| **Fairly Valued** | ~9,000 | 93 m² | 8.99 | Poonak, Jeyhoun, Sazman-e-Barnameh |
+| **Over-Valued** | ~1,800 | 98 m² | 10.00 | Poonak, Chitgar Lake, Salsabil |
 
 #### Key Spatial Findings:
-- Properties across all three valuation bands exhibited nearly identical average built areas ($93 - 98 m^2$).
+- Properties across all three valuation bands exhibited nearly identical average built areas (93–98 m²).
 - Over-valued properties were listed at an average of **10.0 Billion Tomans** vs **4.25 Billion Tomans** for under-valued listings of identical footprint.
 - High seller markup concentrated in speculative high-demand growth zones (e.g., Chitgar Lake area).
 
@@ -359,7 +359,7 @@ Unstructured textual descriptions (`title` and `description`) contain high-densi
 2. **Noise Reduction:** Custom regular expressions purged emojis, HTML fragments, non-Persian character sets, English alphanumeric codes, punctuation, and isolated digits.
 3. **Persian Text Normalization (`Hazm Normalizer`):** Mapped Arabic characters (`ي`, `ك`) to Persian (`ی`, `ک`), standardizing half-spaces (`نیم‌فاصله`).
 4. **Tokenization (`Hazm WordTokenizer`):** Parsed text streams into token sets.
-5. **Stemming (`Hazm Stemmer`):** Reduced inflected variants to root words (e.g., `طبقات` $\rightarrow$ `طبقه`, `آپارتمان‌ها` $\rightarrow$ `آپارتمان`).
+5. **Stemming (`Hazm Stemmer`):** Reduced inflected variants to root words (e.g., `طبقات` → `طبقه`, `آپارتمان‌ها` → `آپارتمان`).
 6. **Stopword Removal:** Filtered high-frequency, low-information Persian grammatical terms using a curated stopword set.
 
 ```
@@ -371,31 +371,31 @@ Raw Text ---> Regex Clean ---> Hazm Normalize ---> Tokenize ---> Stem ---> Stopw
 ### Feature Extraction & Vectorization
 
 Three text representation approaches were constructed:
-1. **Bag of Words (BoW):** `CountVectorizer` constrained to top $10,000$ n-gram features.
-2. **TF-IDF Vectorization:** `TfidfVectorizer` constrained to top $10,000$ features with inverse document frequency weighting:
+1. **Bag of Words (BoW):** `CountVectorizer` constrained to top 10,000 n-gram features.
+2. **TF-IDF Vectorization:** `TfidfVectorizer` constrained to top 10,000 features with inverse document frequency weighting:
    $$\text{TF-IDF}(t, d, D) = \text{TF}(t, d) \times \log\left(\frac{|D|}{|\{d \in D : t \in d\}|}\right)$$
-3. **Word2Vec Embeddings:** Trained Skip-Gram model ($\text{vector\_size}=100$, $\text{min\_count}=2$, $\text{window}=5$). Document vectors computed via mean token embedding aggregation.
+3. **Word2Vec Embeddings:** Trained Skip-Gram model (`vector_size=100`, `min_count=2`, `window=5`). Document vectors computed via mean token embedding aggregation.
 4. **Dense Sequential Identifiers:** Keras `Tokenizer` mapping tokens to integer index sequences, padded to uniform length $N=100$ for deep neural architectures.
 
 ---
 
 ### Task A: Property Type Classification (`cat3_slug`)
 
-Classifying listings into 16 fine-grained property types based exclusively on textual descriptions ($40\%$ random sample $= 400,000$ listings; $80/20$ Train/Test split).
+Classifying listings into 16 fine-grained property types based exclusively on textual descriptions (40% random sample = 400,000 listings; 80/20 Train/Test split).
 
 #### Classical Model Performance Comparison:
 
 | Classifier Architecture | Vectorizer Feature | Accuracy | Weighted $F_1$-Score |
 |---|---|---|---|
-| **Logistic Regression** | BoW | $0.825$ | $0.823$ |
-| **Logistic Regression** | **TF-IDF** | **$0.829$** | **$0.826$** |
-| Naïve Bayes (Multinomial) | BoW | $0.749$ | $0.755$ |
-| Naïve Bayes (Multinomial) | TF-IDF | $0.729$ | $0.715$ |
-| Random Forest (Base) | BoW / TF-IDF | $0.495$ | $0.413$ |
-| Random Forest (Tuned + Class Weights) | BoW / TF-IDF | $0.698$ | $0.716$ |
-| Word2Vec + Classifier | Mean Embedding | $0.778$ | $0.774$ |
+| **Logistic Regression** | BoW | 0.825 | 0.823 |
+| **Logistic Regression** | **TF-IDF** | **0.829** | **0.826** |
+| Naïve Bayes (Multinomial) | BoW | 0.749 | 0.755 |
+| Naïve Bayes (Multinomial) | TF-IDF | 0.729 | 0.715 |
+| Random Forest (Base) | BoW / TF-IDF | 0.495 | 0.413 |
+| Random Forest (Tuned + Class Weights) | BoW / TF-IDF | 0.698 | 0.716 |
+| Word2Vec + Classifier | Mean Embedding | 0.778 | 0.774 |
 
-**Classical Baseline Winner:** **Logistic Regression + TF-IDF** achieved **$82.9\%$ Accuracy** and **$0.826$ Weighted $F_1$-Score**.
+**Classical Baseline Winner:** **Logistic Regression + TF-IDF** achieved **82.9% Accuracy** and **0.826 Weighted $F_1$-Score**.
 
 ---
 
@@ -416,8 +416,8 @@ Input Tokens (Length=100)
 ```
 
 - **Loss Function:** `sparse_categorical_crossentropy`
-- **Optimizer:** `Adam` ($\text{lr} = 0.001$)
-- **Batch Size:** $32$ | **Epochs:** $10$
+- **Optimizer:** `Adam` (`lr = 0.001`)
+- **Batch Size:** 32 | **Epochs:** 10
 
 ```
 LSTM Learning Curves across Epochs
@@ -431,45 +431,45 @@ LSTM Learning Curves across Epochs
 ```
 
 #### Epoch Training Dynamics:
-- **Epoch 1:** Training Acc = $0.73$, Val Acc = $0.83$, Val Loss = $0.80$.
-- **Epoch 2–3:** Val Acc reached **$0.84$ ($84.0\%$)**, Val Loss minimized at **$0.44$**.
-- **Epoch 4–10:** Training Acc climbed to $0.89$ (Train Loss dropped to $0.28$), but Val Loss expanded to $0.54$, signaling onset of mild memorization / overfitting.
-- **Optimal Early Stopping Point:** Epoch $3 - 4$.
+- **Epoch 1:** Training Acc = 0.73, Val Acc = 0.83, Val Loss = 0.80.
+- **Epoch 2–3:** Val Acc reached **0.84 (84.0%)**, Val Loss minimized at **0.44**.
+- **Epoch 4–10:** Training Acc climbed to 0.89 (Train Loss dropped to 0.28), but Val Loss expanded to 0.54, signaling onset of mild memorization / overfitting.
+- **Optimal Early Stopping Point:** Epoch 3–4.
 
 #### Performance Metric:
-The LSTM achieved **$84.0\%$ multi-class accuracy** across 16 categories, outperforming the baseline random guess benchmark of $6.25\%$ ($1/16$) and surpassing classical TF-IDF Logistic Regression.
+The LSTM achieved **84.0% multi-class accuracy** across 16 categories, outperforming the baseline random guess benchmark of 6.25% (1/16) and surpassing classical TF-IDF Logistic Regression.
 
 ---
 
 ### Task B: Advertiser Type Classification (`user_type`) & Imputation
 
 #### Problem Formulation:
-Out of 999,945 total listings, only **288,877 listings** contained valid `user_type` labels, while **$>700,000$ listings were unlabelled (`NaN`)**. A supervised model was trained on the labelled subset to impute the unlabelled listings.
+Out of 999,945 total listings, only **288,877 listings** contained valid `user_type` labels, while **>700,000 listings were unlabelled (`NaN`)**. A supervised model was trained on the labelled subset to impute the unlabelled listings.
 
 #### Class Imbalance & Weighting:
 The labelled subset exhibited heavy imbalance:
-- **Real Estate Agencies (`real-estate-agent`):** $102,043$ listings ($88.4\%$, Majority Class).
-- **Personal / Individual Sellers (`personal`):** $13,348$ listings ($11.6\%$, Minority Class).
-- **Imbalance Ratio:** $\approx 7.64 : 1$.
+- **Real Estate Agencies (`real-estate-agent`):** 102,043 listings (88.4%, Majority Class).
+- **Personal / Individual Sellers (`personal`):** 13,348 listings (11.6%, Minority Class).
+- **Imbalance Ratio:** ≈ 7.64 : 1.
 
 To prevent the model from defaulting to predicting the majority class, explicit loss penalty weights were computed via `compute_class_weight`:
 $$W_{\text{majority}} = 0.57 \quad \mid \quad W_{\text{minority}} = 4.32$$
 
 #### Binary LSTM Architecture:
-- Structure: `Embedding(10,000, 128)` $\rightarrow$ `LSTM(64)` $\rightarrow$ `Dropout(0.3)` $\rightarrow$ `Dense(1, Sigmoid)`.
+- Structure: `Embedding(10,000, 128)` → `LSTM(64)` → `Dropout(0.3)` → `Dense(1, Sigmoid)`.
 - Loss: `binary_crossentropy` with `class_weight` penalties applied during `fit()`.
 
 #### Model Evaluation on Unseen Test Fold:
 
 | Target Class | Class Weight | Precision | Recall | $F_1$-Score | Sample Count |
 |---|---|---|---|---|---|
-| **Personal (`personal`)** | $4.32$ | $0.53$ | **$0.81$** | $0.64$ | ~2,670 |
-| **Agency (`real-estate-agent`)** | $0.57$ | $0.97$ | $0.91$ | $0.94$ | ~20,400 |
-| **Macro Average** | — | $0.75$ | $0.86$ | $0.79$ | ~23,070 |
-| **Weighted Average** | — | **$0.92$** | **$0.89$** | **$0.90$** | ~23,070 |
+| **Personal (`personal`)** | 4.32 | 0.53 | **0.81** | 0.64 | ~2,670 |
+| **Agency (`real-estate-agent`)** | 0.57 | 0.97 | 0.91 | 0.94 | ~20,400 |
+| **Macro Average** | — | 0.75 | 0.86 | 0.79 | ~23,070 |
+| **Weighted Average** | — | **0.92** | **0.89** | **0.90** | ~23,070 |
 
 #### Imputation Outcome:
-Applying the trained binary LSTM classifier to the $>700,000$ unlabelled entries successfully generated high-confidence predictions, stored in a new field `predicted_user_type`. This completed the dataset without discarding valuable unlabelled samples.
+Applying the trained binary LSTM classifier to the >700,000 unlabelled entries successfully generated high-confidence predictions, stored in a new field `predicted_user_type`. This completed the dataset without discarding valuable unlabelled samples.
 
 ---
 
@@ -477,9 +477,9 @@ Applying the trained binary LSTM classifier to the $>700,000$ unlabelled entries
 
 ### Key Technical Achievements
 1. **Data Pipeline Robustness:** Successfully cleaned and standardized a multi-modal 1M+ listing Persian dataset, converting missing entries into meaningful signals.
-2. **Market Segmentation:** Discovered 8 stable, interpretable property clusters using $K$-Means and 8-component PCA ($90.22\%$ variance retained, $>96\%$ cluster stability).
+2. **Market Segmentation:** Discovered 8 stable, interpretable property clusters using K-Means and 8-component PCA (90.22% variance retained, >96% cluster stability).
 3. **Automated Valuation:** Built distance and tree-based price regression models achieving $R^2 = 0.835$, successfully categorizing listings into Over-valued, Fairly-valued, and Under-valued bands.
-4. **Persian NLP & Deep Learning:** Deployed Hazm NLP normalization with an LSTM neural network, achieving $84.0\%$ accuracy on 16-class property classification and $0.90$ Weighted $F_1$ on advertiser classification, enabling mass missing-value imputation for $>700,000$ listings.
+4. **Persian NLP & Deep Learning:** Deployed Hazm NLP normalization with an LSTM neural network, achieving 84.0% accuracy on 16-class property classification and 0.90 Weighted $F_1$ on advertiser classification, enabling mass missing-value imputation for >700,000 listings.
 
 ### Industrial & Business Applications
 
