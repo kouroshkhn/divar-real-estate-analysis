@@ -45,6 +45,7 @@ outputs/
 *.ckpt
 models/
 
-# Secrets
+# Secrets & Temp
 .env
 secrets.json
+presentation_upload_result.json

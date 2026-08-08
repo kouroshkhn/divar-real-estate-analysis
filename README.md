@@ -10,16 +10,10 @@
 
 ## 📌 Project Overview
 
-This project applies the full data science pipeline to a large-scale Persian real-estate dataset scraped from **Divar.ir**, one of Iran's largest classifieds platforms. The dataset contains **1,000,000+ property listings** with 60 features, covering residential, commercial, and rental properties across all major Iranian cities.
+This project applies the full data science pipeline to a large-scale Persian real-estate dataset from **Divar.ir**, one of Iran's largest classifieds platforms. The dataset contains **1,000,000+ property listings** with 60 features, covering residential, commercial, and rental properties across all major Iranian cities.
 
-The analysis was conducted by students of the **Daqiqeh Data Science School** (مدرسه پردازش و تحلیل داده دقیقه):
-
-| Name | Role |
-|---|---|
-| Kourosh Khodaei Namin | Data Analysis & Modeling |
-| Zeinab Sadat Hosseini | Clustering & NLP |
-| Ilia Taherinia | EDA & Data Cleaning |
-
+> **Institution:** [D-Learn Data Processing & Analysis School](https://D-learn.ir) (مدرسه پردازش و تحلیل داده دقیقه)
+>
 > **Completed:** Autumn 2025 (1404 Iranian calendar)
 
 ---
@@ -43,11 +37,12 @@ divar-real-estate-analysis/
 │   └── README.md                      ← Dataset download instructions
 │
 ├── reports/
-│   ├── final_report_fa.pdf            ← Full Persian project report
-│   └── Presentation.pdf              ← Project presentation slides
+│   └── final_report_en.md             ← Comprehensive English technical report
 │
 └── images/                            ← Plots and figures (from notebooks)
 ```
+
+> 📄 **PDF Reports & Assets** (Final Persian PDF + Presentation Slides) are available in the [v1.0 Release](https://github.com/kouroshkhn/divar-real-estate-analysis/releases/tag/v1.0).
 
 ---
 
@@ -55,7 +50,7 @@ divar-real-estate-analysis/
 
 | Property | Value |
 |---|---|
-| **Source** | [Hugging Face — divar_real_estate_ads](https://huggingface.co/datasets/divar_real_estate_ads) |
+| **Source** | [Hugging Face — Divar Real Estate Ads](https://huggingface.co/datasets/divarofficial/real_estate_ads) |
 | **Rows** | ~1,000,000+ listings |
 | **Columns** | 60 features |
 | **Language** | Persian / Farsi |
@@ -213,7 +208,7 @@ This model was also used to **impute ~700,000 missing `user_type` values** in th
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/divar-real-estate-analysis.git
+git clone https://github.com/kouroshkhn/divar-real-estate-analysis.git
 cd divar-real-estate-analysis
 ```
 
@@ -235,7 +230,7 @@ pip install -r requirements.txt
 
 ### 4. Download the dataset
 
-See [`data/README.md`](data/README.md) for instructions on obtaining `divar_real_estate_ads.csv` from Hugging Face.
+Download from [Hugging Face](https://huggingface.co/datasets/divarofficial/real_estate_ads) and place it as `data/divar_real_estate_ads.csv`.
 
 ### 5. Run the notebooks in order
 
@@ -277,8 +272,9 @@ Each notebook produces checkpoint files used by the next stage:
 
 ## 📄 Reports
 
-- [**Final Report (Persian)**](reports/final_report_fa.pdf) — Full technical report in Farsi
-- [**Presentation Slides**](reports/Presentation.pdf) — Project presentation deck
+- [**Final Report (English)**](reports/final_report_en.md) — Comprehensive technical report in English Markdown
+- [**Final Report (Persian PDF)**](https://github.com/kouroshkhn/divar-real-estate-analysis/releases/download/v1.0/final_report_fa.pdf) — Full technical report in Farsi
+- [**Presentation Slides (PDF)**](https://github.com/kouroshkhn/divar-real-estate-analysis/releases/download/v1.0/Presentation.pdf) — Project presentation deck
 
 ---
 
@@ -290,6 +286,6 @@ This project is released under the [MIT License](https://opensource.org/licenses
 
 ## 🙏 Acknowledgements
 
-- Dataset source: [Hugging Face — divar_real_estate_ads](https://huggingface.co/datasets/divar_real_estate_ads)
+- Dataset: [Hugging Face — Divar Real Estate Ads](https://huggingface.co/datasets/divarofficial/real_estate_ads)
 - Persian NLP: [Hazm library](https://github.com/sobhe/hazm)
-- Institution: [Daqiqeh Data Processing & Analysis School](https://daqiqeh.ir)
+- Institution: [D-Learn Data Processing & Analysis School](https://D-learn.ir)

@@ -6,11 +6,11 @@ This directory is intentionally kept **empty** (except for this README) in the p
 
 ---
 
-## Dataset: Divar Real Estate Ads (`divar_real_estate_ads.csv`)
+## Dataset: Divar Real Estate Ads
 
 | Property | Value |
 |---|---|
-| Source | [Hugging Face — divar_real_estate_ads](https://huggingface.co/datasets/divar_real_estate_ads) |
+| Source | [Hugging Face — Divar Real Estate Ads](https://huggingface.co/datasets/divarofficial/real_estate_ads) |
 | Rows | ~1,000,000+ real estate listings |
 | Columns | 60 features (see below) |
 | Language | Persian / Farsi |
@@ -39,7 +39,7 @@ This directory is intentionally kept **empty** (except for this README) in the p
 
 ## How to Use
 
-1. Download the dataset from Hugging Face (link above) **or** request the CSV file from the project authors.
+1. Download the dataset from [Hugging Face](https://huggingface.co/datasets/divarofficial/real_estate_ads).
 2. Place the raw file here as:
    ```
    data/divar_real_estate_ads.csv
