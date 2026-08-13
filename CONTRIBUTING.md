@@ -79,5 +79,5 @@ Please open a [GitHub Issue](https://github.com/kouroshkhn/divar-real-estate-ana
 
 ## 📬 Contact
 
-For questions about the analysis methodology, contact the authors via the institution:
+For questions about the analysis methodology, contact us via the institution:
 [D-Learn Data Processing & Analysis School](https://D-learn.ir)

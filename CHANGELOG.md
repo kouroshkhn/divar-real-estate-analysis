@@ -16,7 +16,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `scipy`, `Pillow` added to `requirements.txt` (previously implicit dependencies)
 - HuggingFace dataset badge in `README.md`
 - GitHub release badge in `README.md`
-- **Authors table** restored to `README.md`
 - **Key Results at a Glance** summary table added to `README.md`
 - `age_of_building` feature engineering documented in `README.md` notebook 04 section
 - LSTM row added to Task A classification table in `README.md`
@@ -48,7 +47,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `.gitignore` for data files, model weights, and editor files
 - `data/README.md` with dataset download instructions
 - Persian technical report (`final_report_fa.pdf`) — available in [v1.0 Release](https://github.com/kouroshkhn/divar-real-estate-analysis/releases/tag/v1.0)
-- Presentation slides (`Presentation.pdf`) — available in [v1.0 Release](https://github.com/kouroshkhn/divar-real-estate-analysis/releases/tag/v1.0)
 
 [Unreleased]: https://github.com/kouroshkhn/divar-real-estate-analysis/compare/v1.0...HEAD
 [1.0.0]: https://github.com/kouroshkhn/divar-real-estate-analysis/releases/tag/v1.0

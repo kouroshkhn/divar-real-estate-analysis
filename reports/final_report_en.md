@@ -1,7 +1,6 @@
 # Divar Real Estate Data Analysis — Technical Report
 
 > **Comprehensive Data Science & Machine Learning Pipeline on 1M+ Real Estate Listings**  
-> **Authors:** Khodaei, Hosseini, Taherinia  
 > **Institution:** D-Learn Data Processing & Analysis School (*مدرسه پردازش و تحلیل داده دقیقه*)  
 > **Dataset Source:** [Divar Real Estate Ads (Hugging Face)](https://huggingface.co/datasets/divarofficial/real_estate_ads)  
 > **Version:** 1.1 · August 2026  
@@ -283,19 +282,20 @@ To model sale prices accurately, the dataset was filtered to **Tehran Residentia
 Three domain-specific engineered features were introduced:
 
 1. **Building Age (`age_of_building`):**
-   $$\text{age\_of\_building} = 1403 - \text{construction\_year}$$
-   Provides a direct metric for physical depreciation.
+   `age_of_building = 1403 - construction_year`  
+   Provides a direct metric for physical depreciation (1403 = current Solar Hijri year).
 
 2. **Elevator Floor Interaction Effect (`elevator_floor_effect`):**
    High floor units without elevators suffer severe market penalties, whereas elevator access transforms high floors into premium penthouse space:
-   $$\text{elevator\_floor\_effect} = \begin{cases} \text{floor} \times 1.5 & \text{if } \text{has\_elevator} = \text{True} \\ \text{floor} \times 0.7 & \text{if } \text{has\_elevator} = \text{False} \end{cases}$$
+   - If `has_elevator = True`: `elevator_floor_effect = floor × 1.5`
+   - If `has_elevator = False`: `elevator_floor_effect = floor × 0.7`
 
 3. **Neighborhood Price Proxy (`neighborhood_avg_price`):**
    Calculated as the target-encoded median sale price per `neighborhood_slug` derived exclusively from the training fold to prevent data leakage.
 
 4. **Logarithmic Target Transformation:**
-   To equalize error variance across price tiers:
-   $$y = \log(1 + \text{price\_value})$$
+   To equalize error variance across price tiers:  
+   `y = log(1 + price_value)`
 
 ### Data Splitting & ColumnTransformer Pipeline
 
