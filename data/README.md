@@ -30,21 +30,40 @@ This directory is intentionally kept **empty** (except for this README) in the p
 | `rooms_count` | Number of bedrooms |
 | `floor` | Floor number |
 | `total_floors_count` | Total floors in the building |
-| `construction_year` | Year built |
+| `construction_year` | Year built (Solar Hijri calendar) |
 | `user_type` | Advertiser type: individual or agency |
 | `description`, `title` | Free-text fields (Persian) |
 | `has_parking`, `has_elevator`, … | Binary amenity flags |
 
 ---
 
-## How to Use
+## How to Download
 
-1. Download the dataset from [Hugging Face](https://huggingface.co/datasets/divarofficial/real_estate_ads).
-2. Place the raw file here as:
+### Option A — Python (recommended)
+
+Install the `datasets` library and run:
+
+```python
+from datasets import load_dataset
+
+ds = load_dataset("divarofficial/real_estate_ads")
+ds["train"].to_csv("data/divar_real_estate_ads.csv", index=False)
+```
+
+### Option B — Manual
+
+1. Go to [https://huggingface.co/datasets/divarofficial/real_estate_ads](https://huggingface.co/datasets/divarofficial/real_estate_ads)
+2. Click **Download** and save the file.
+3. Place it here as:
    ```
    data/divar_real_estate_ads.csv
    ```
-3. The notebooks also use several intermediate `.pkl` checkpoints that are produced by running the notebooks in order:
+
+---
+
+## Intermediate Files
+
+The notebooks also use several intermediate `.pkl` checkpoints that are produced by running the notebooks in order:
 
 | File | Produced by | Used by |
 |---|---|---|

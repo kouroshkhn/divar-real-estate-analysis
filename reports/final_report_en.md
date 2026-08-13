@@ -4,6 +4,22 @@
 > **Authors:** Khodaei, Hosseini, Taherinia  
 > **Institution:** D-Learn Data Processing & Analysis School (*مدرسه پردازش و تحلیل داده دقیقه*)  
 > **Dataset Source:** [Divar Real Estate Ads (Hugging Face)](https://huggingface.co/datasets/divarofficial/real_estate_ads)  
+> **Version:** 1.1 · August 2026  
+
+---
+
+## Results Summary
+
+| Task | Method | Key Metric |
+|---|---|---|
+| Data deduplication | Two-tier quality strategy | 8,790 duplicates removed from 981,675 records |
+| Property clustering | K-Means (K=8) + PCA (8 components) | 90.22% variance retained · 96–100% cluster stability |
+| Price regression | KNN Regressor (k=7, distance-weighted) | R² = **0.835** on test set |
+| Price regression | Linear Regression (baseline) | R² = 0.770 |
+| Property type classification | Logistic Regression + TF-IDF | Accuracy = **82.9%** · Weighted F1 = 0.826 |
+| Property type — deep learning | LSTM + Embedding (16 classes) | Accuracy = **84.0%** |
+| Advertiser type (binary) | LSTM + class weights | Weighted F1 = **0.90** · Minority recall = 0.81 |
+| Missing value imputation | Binary LSTM applied to unlabelled | ~700,000 `user_type` values imputed |
 
 ---
 
@@ -473,7 +489,25 @@ Applying the trained binary LSTM classifier to the >700,000 unlabelled entries s
 
 ---
 
-## 8. Conclusion & Strategic Applications
+## 8. Limitations
+
+### Data Limitations
+- **Geographic Scope:** The price modeling and clustering stages focus exclusively on **Tehran** listings. Results may not generalise directly to other Iranian cities with different market dynamics (e.g., Mashhad, Isfahan, Shiraz).
+- **Temporal Snapshot:** The dataset reflects a single crawl period. Real estate markets are highly time-sensitive; models trained on this snapshot may drift in accuracy over time.
+- **Missing Value Rate:** Over 70% of values were missing for short-term rental features (`rent_price_on_regular_days`, `has_sauna`, etc.), requiring complete exclusion of these columns from quantitative analysis.
+
+### Modeling Limitations
+- **MLP Underperformance:** The `MLPRegressor` consistently produced negative R² across all tested architectures. This is attributable to high-dimensional sparse One-Hot Encoding combined with limited hyperparameter search scope (2,000-sample subset). A full grid search on the complete dataset may yield different results.
+- **LSTM Overfitting (Task A):** Validation loss began increasing after Epoch 3–4 while training accuracy continued climbing to 89%, indicating mild overfitting. Early stopping at Epoch 3–4 is recommended.
+- **Class Imbalance (Task B):** Despite class-weighted training (W_minority = 4.32), precision for the minority class (`personal`) reached only 0.53, meaning ~47% of predicted individual sellers are actually agencies.
+
+### NLP Limitations
+- **Hazm Stemmer Errors:** Persian morphology is complex; Hazm's rule-based stemmer occasionally over-stems or under-stems rare property terminology.
+- **No Pre-trained Embeddings:** Word2Vec was trained from scratch on this corpus (~1M documents). Using a larger pre-trained Persian model (e.g., ParsBERT) would likely improve classification accuracy but requires significantly more compute.
+
+---
+
+## 9. Conclusion & Strategic Applications
 
 ### Key Technical Achievements
 1. **Data Pipeline Robustness:** Successfully cleaned and standardized a multi-modal 1M+ listing Persian dataset, converting missing entries into meaningful signals.

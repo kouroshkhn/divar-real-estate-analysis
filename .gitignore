@@ -24,6 +24,7 @@ data/*.parquet
 data/*.feather
 data/*.h5
 data/*.hdf5
+data/*.npz
 !data/README.md
 
 # OS & Editor
@@ -43,7 +44,14 @@ outputs/
 *.pt
 *.pth
 *.ckpt
+*.keras
+*.h5
 models/
+
+# Experiment tracking
+wandb/
+mlruns/
+.mlflow/
 
 # Secrets & Temp
 .env
